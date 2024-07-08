@@ -35,23 +35,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $company1 = Company::create(['company_id' => null, 'label' => 'ESPRIT Ecole Sup Privée d\'Ingénierie et de Technologies', 'description' => 'Test Description']);
-        // $company2 = Company::create(['company_id' => null, 'label' => 'Université de Carthage', 'description' => 'Test Description']);
-        // $company3 = Company::create(['company_id' => null, 'label' => 'Université de Sfax', 'description' => 'Test Description']);
-        // $company4 = Company::create(['company_id' => null, 'label' => 'Université de Monastir', 'description' => 'Test Description']);
-        // $company5 = Company::create(['company_id' => null, 'label' => 'Université de Tunis El Manar', 'description' => 'Test Description']);
 
-        // $company2 = Company::create(['company_id' => $company1->id, 'label' => 'Esprit Informatique']);
-        // $company3 = Company::create(['company_id' => $company1->id, 'label' => 'Esprit School Of Buisness']);
-        // $company4 = Company::create(['company_id' => $company1->id, 'label' => 'Esprit Génie Civil']);
-        // $company5 = Company::create(['company_id' => $company1->id, 'label' => 'Esprit Électromécanique']);
-        // $company10 = Company::create(['company_id' => $company1->id, 'label' => 'Faculté des Sciences']);
-        // $company11 = Company::create(['company_id' => $company1->id, 'label' => 'Faculté des Lettres, des Arts et des Humanités']);
-        // $company12 = Company::create(['company_id' => $company2->id, 'label' => 'Faculté des Sciences Économiques et de Gestion']);
-        // $company13 = Company::create(['company_id' => $company2->id, 'label' => 'Faculté des Sciences Humaines et Sociales']);
-        // $company14 = Company::create(['company_id' => $company3->id, 'label' => 'Faculté des Sciences']);
-        // $company15 = Company::create(['company_id' => $company3->id, 'label' => 'Faculté de Médecine']);
-        // $company16 = Company::create(['company_id' => $company4->id, 'label' => 'Faculté des Sciences Économiques et de Gestion']);
-        // $company17 = Company::create(['company_id' => $company4->id, 'label' => 'Faculté des Sciences']);
 
         $role1 = Role::create(['label' => 'User']);
         $role2 = Role::create(['label' => 'Instructor']);
