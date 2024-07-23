@@ -9,6 +9,7 @@ use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\CouponsController;
 use App\Http\Controllers\FilesController;
 use App\Http\Controllers\LessonsController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PermissionsController;
 use App\Http\Controllers\QuizzesController;
@@ -226,4 +227,21 @@ Route::middleware(['auth:api', 'check_if_user_is_blocked'])->group(function () {
         Route::get('/certification/{id}', 'show');
         Route::delete('/certification/{id}', 'destroy');
     });
+
+
+    Route::controller(NotificationController::class)->group(function () {
+        Route::get('/notifications', 'index');
+        Route::get('/notifications/{id}','show');
+        Route::post('/notifications', 'store');
+        Route::put('/notifications/{id}', 'update');
+        Route::delete('/notifications/{id}', 'destroy');
+        Route::post('/notifications/{id}/read', 'markAsRead');
+        Route::post('/notifications/{id}/unread', 'markAsUnread');
+        Route::post('/notifications/{id}/archive', 'archive');
+        Route::post('/notifications/{id}/unarchive', 'unarchive');
+    });
+
+
+
+
 });

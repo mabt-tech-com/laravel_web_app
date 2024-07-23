@@ -43,4 +43,10 @@ class Role extends Model
     {
         return $this->belongsToMany(Permission::class)->withPivot('company_id')->withTimestamps();
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
 }
