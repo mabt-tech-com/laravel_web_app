@@ -14,12 +14,12 @@ class Notification extends Model
     protected $fillable = [
         'title',
         'message',
-        'user_id',
-        'role_id',
-        'scheduled_at',
+        'user_id',  // null for all users
+        'role_id', // null for all users
+        'scheduled_at', // null for immediate
         'sent_at',
         'status',
-        'send_via_smtp',
+        'send_via_smtp', // false for in-app only
         'read',
         'archived',
     ];

@@ -44,9 +44,11 @@ class NotificationController extends Controller
 
         $notification = Notification::create($request->all());
 
+        // Schedule the notification if scheduled_at is set
         if ($notification->scheduled_at) {
             // Schedule logic here, possibly with a job/queue
         } else {
+            // Send the notification immediately
             $this->sendNotification($notification);
         }
 
