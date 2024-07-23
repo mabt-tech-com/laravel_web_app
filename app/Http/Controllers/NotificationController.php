@@ -41,11 +41,14 @@ class NotificationController extends Controller
                 $this->sendNotification($notification);
             }
 
-            $notification->save();
-            return response()->json($notification, 201);
-        } catch (\Exception $e) {
-            Log::error('Error creating notification: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to create notification'], 500);
+
+        // Schedule the notification if scheduled_at is set
+        if ($notification->scheduled_at) {
+            // Schedule logic here, possibly with a job/queue
+        } else {
+            // Send the notification immediately
+            $this->sendNotification($notification);
+
         }
     }
 

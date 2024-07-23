@@ -20,6 +20,8 @@ class Notification extends Model
         'company_id',
         'title',
         'message',
+        'user_id',  // null for all users
+        'role_id', // null for all users
         'scheduled_at', // null for immediate
         'sent_at',
         'status',
