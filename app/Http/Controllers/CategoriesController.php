@@ -15,7 +15,17 @@ class CategoriesController extends Controller
 
             $categories_query_builder = Category::where('company_id', request('company_id'))
                 ->withCount('trainings')
-                ->withCount('quizzes');
+                ->withCount([
+                    'quizzes as quizzes_count' => function ($query) {
+                        $query->whereNotNull('chapter_id');
+                    },
+                ])
+                ->withCount([
+                    'quizzes as exams_count' => function ($query) {
+                        $query->whereNull('chapter_id');
+                    },
+                ])
+                ->latest();
 
             if (request('has_trainings') === 'true') {
                 $categories_query_builder->has('trainings', '>', 0);
@@ -26,6 +36,7 @@ class CategoriesController extends Controller
             return response()->json($categories);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -51,6 +62,7 @@ class CategoriesController extends Controller
             ]);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -63,6 +75,7 @@ class CategoriesController extends Controller
             return response()->json($category);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -71,11 +84,10 @@ class CategoriesController extends Controller
     {
         try {
             request()->validate([
-                'company_id' => 'required|integer|exists:companies,id',
                 'label' => 'required|string|min:1|max:255',
             ]);
 
-            $category = Category::where('company_id', request('company_id'))->findOrFail($id);
+            $category = Category::findOrFail($id);
 
             $category->label = request('label');
 
@@ -86,6 +98,7 @@ class CategoriesController extends Controller
             return response()->json(['message' => trans('category.updated')]);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -105,6 +118,7 @@ class CategoriesController extends Controller
             return response()->json(['message' => trans('category.deleted')]);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }

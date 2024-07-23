@@ -9,19 +9,61 @@ class CouponsController extends Controller
     public function index()
     {
         try {
-            $coupons = Coupon::paginate(config('custom_config.pagination_items'));
+            request()->validate([
+
+                'title' => 'sometimes|string|min:1|max:255',
+                'code' => 'sometimes|string|min:1|max:255',
+                'active' => 'sometimes|boolean',
+                'min_discount' => 'sometimes|integer|min:0',
+                'max_discount' => 'sometimes|integer|min:0',
+            ]);
+
+            $coupons_query_builder = Coupon::latest();
+
+            if (request('title')) {
+                $coupons_query_builder->where('title', 'like', '%' . request('title') . '%');
+            }
+
+            if (request('code')) {
+                $coupons_query_builder->where('code', 'like', '%' . request('code') . '%');
+            }
+
+            if (request('active') !== null) {
+                $coupons_query_builder->where('active', request('active'));
+            }
+
+            // more specific filters :
+
+            if (request('min_discount')) {
+                $coupons_query_builder->where(function($query) {
+                    $query->where('discount_percentage', '>=', request('min_discount'))
+                        ->orWhere('discount_value', '>=', request('min_discount'));
+                });
+            }
+
+            if (request('max_discount')) {
+                $coupons_query_builder->where(function($query) {
+                    $query->where('discount_percentage', '<=', request('max_discount'))
+                        ->orWhere('discount_value', '<=', request('max_discount'));
+                });
+            }
+
+            $coupons = $coupons_query_builder->paginate(config('custom_config.pagination_items'));
 
             return response()->json($coupons);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+
 
     public function store()
     {
         try {
             request()->validate([
+                'company_id' => 'required|integer|exists:companies,id',
                 'code' => 'required|string',
                 'title' => 'required|string',
                 'description' => 'required|string',
@@ -35,6 +77,7 @@ class CouponsController extends Controller
             ]);
 
             $coupon = Coupon::create([
+                'company_id' => request('company_id'),
                 'code' => request('code'),
                 'title' => request('title'),
                 'description' => request('description'),
@@ -55,6 +98,7 @@ class CouponsController extends Controller
             ]);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -67,6 +111,7 @@ class CouponsController extends Controller
             return response()->json($coupon);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -107,9 +152,13 @@ class CouponsController extends Controller
             return response()->json(['message' => 'Coupon updated successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+
+
+
 
     public function destroy($id)
     {
@@ -128,7 +177,12 @@ class CouponsController extends Controller
             return response()->json(['message' => 'Coupon deleted successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+
+
+
+
 }

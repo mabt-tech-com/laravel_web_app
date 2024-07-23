@@ -13,6 +13,7 @@ class UserPolicy
     public function viewAny(User $user): bool
     {
         return true;
+
         return auth()->user()->permissions()->pluck('id')->contains(Permission::USERS_LIST);
     }
 
@@ -22,6 +23,7 @@ class UserPolicy
     public function view(User $user, User $model): bool
     {
         return true;
+
         return auth()->user()->permissions()->pluck('id')->contains(Permission::USERS_VIEW) && auth()->user()->id === $model->id;
     }
 
@@ -39,6 +41,7 @@ class UserPolicy
     public function update(User $user, User $model): bool
     {
         return true;
+
         return auth()->user()->permissions()->pluck('id')->contains(Permission::USERS_UPDATE) && auth()->user()->id === $model->id;
     }
 
@@ -48,6 +51,7 @@ class UserPolicy
     public function delete(User $user, User $model): bool
     {
         return true;
+
         return auth()->user()->permissions()->pluck('id')->contains(Permission::USERS_DELETE) && auth()->user()->id === $model->id;
     }
 
@@ -57,6 +61,7 @@ class UserPolicy
     public function restore(User $user, User $model): bool
     {
         return true;
+
         return auth()->user()->permissions()->pluck('id')->contains(Permission::USERS_RESTORE) && auth()->user()->id === $model->id;
     }
 
@@ -66,6 +71,7 @@ class UserPolicy
     public function forceDelete(User $user, User $model): bool
     {
         return true;
+
         return auth()->user()->permissions()->pluck('id')->contains(Permission::USERS_FORCE_DELETE) && auth()->user()->id === $model->id;
     }
 }

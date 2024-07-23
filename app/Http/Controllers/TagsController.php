@@ -13,7 +13,9 @@ class TagsController extends Controller
                 'company_id' => 'required|integer|exists:companies,id',
             ]);
 
-            $tags_query_builder = Tag::where('company_id', request('company_id'))->withCount('trainings');
+            $tags_query_builder = Tag::where('company_id', request('company_id'))
+                ->withCount('trainings')
+                ->latest();
 
             if (request('has_trainings') === 'true') {
                 $tags_query_builder->has('trainings', '>', 0);
@@ -24,6 +26,7 @@ class TagsController extends Controller
             return response()->json($tags);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -49,6 +52,7 @@ class TagsController extends Controller
             ]);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -61,6 +65,7 @@ class TagsController extends Controller
             return response()->json($tag);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -69,11 +74,10 @@ class TagsController extends Controller
     {
         try {
             request()->validate([
-                'company_id' => 'required|integer|exists:companies,id',
                 'label' => 'required|string|min:1|max:255',
             ]);
 
-            $tag = Tag::where('company_id', request('company_id'))->findOrFail($id);
+            $tag = Tag::findOrFail($id);
 
             $tag->label = request('label');
 
@@ -84,6 +88,7 @@ class TagsController extends Controller
             return response()->json(['message' => 'Tag updated successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -103,6 +108,7 @@ class TagsController extends Controller
             return response()->json(['message' => 'Tag deleted successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }

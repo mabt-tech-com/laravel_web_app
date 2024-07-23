@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Company;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderStatus;
 use App\Models\Quiz;
@@ -24,10 +26,11 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
+            'company_id' => Company::all()->random()->id,
             'student_id' => User::where('role_id', Role::STUDENT)->get()->random()->id,
             'type' => Order::ORDER,
             'order_status_id' => OrderStatus::PENDING_ID,
-            'coupon_id' => fake()->randomElement([true, false]) ? null : null, // Coupon::all()->random()->id,
+            'coupon_id' => fake()->randomElement([true, false]) ? null : Coupon::all()->random()->id,
             'voucher_id' => fake()->randomElement([true, false]) ? null : Voucher::all()->random()->id,
         ];
     }

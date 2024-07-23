@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,6 +19,7 @@ class FileFactory extends Factory
     public function definition(): array
     {
         return [
+            'company_id' => Company::all()->random()->id,
             'user_id' => User::all()->random()->id,
             'type' => 2,
             'file_name' => null,

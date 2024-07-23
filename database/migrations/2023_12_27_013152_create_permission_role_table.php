@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
 
             $table->unsignedBigInteger('company_id');
-            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');;
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
 
             $table->unsignedBigInteger('role_id');
-            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');;
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
 
             $table->unsignedBigInteger('permission_id');
-            $table->foreign('permission_id')->references('id')->on('permissions')->onDelete('cascade');;
+            $table->foreign('permission_id')->references('id')->on('permissions')->onDelete('cascade');
 
             $table->unique(['company_id', 'role_id', 'permission_id']);
 

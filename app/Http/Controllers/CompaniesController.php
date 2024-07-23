@@ -13,11 +13,14 @@ class CompaniesController extends Controller
 
             $companies = Company::with('companies')
             // ->whereHas('companies')
+                ->latest()
                 ->paginate(config('custom_config.pagination_items'));
 
             return response()->json($companies);
+
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -46,6 +49,7 @@ class CompaniesController extends Controller
             return response()->json(['message' => 'Company created successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -60,6 +64,7 @@ class CompaniesController extends Controller
             return response()->json($company);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -90,6 +95,7 @@ class CompaniesController extends Controller
             return response()->json(['message' => 'Company updated successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -115,6 +121,7 @@ class CompaniesController extends Controller
             return response()->json(['message' => 'Company deleted successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -133,6 +140,7 @@ class CompaniesController extends Controller
             return response()->json(['message' => 'Company restored successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -151,6 +159,7 @@ class CompaniesController extends Controller
             return response()->json(['message' => 'Company force deleted successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }

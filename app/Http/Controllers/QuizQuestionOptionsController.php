@@ -9,11 +9,13 @@ class QuizQuestionOptionsController extends Controller
     public function index()
     {
         try {
-            $quiz_question_options = QuizQuestionOption::paginate(config('custom_config.pagination_items'));
+            $quiz_question_options = QuizQuestionOption::latest()
+                ->paginate(config('custom_config.pagination_items'));
 
             return response()->json($quiz_question_options);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -38,9 +40,9 @@ class QuizQuestionOptionsController extends Controller
                 'quiz_question_option_id' => $quiz_question_option->id,
                 'message' => 'Quiz Question Option created successfully.',
             ]);
-
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -53,6 +55,7 @@ class QuizQuestionOptionsController extends Controller
             return response()->json($quiz_question_option);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -76,6 +79,7 @@ class QuizQuestionOptionsController extends Controller
             return response()->json(['message' => 'Quiz Question Option updated successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -92,6 +96,7 @@ class QuizQuestionOptionsController extends Controller
             return response()->json(['message' => 'Quiz Question Option deleted successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }

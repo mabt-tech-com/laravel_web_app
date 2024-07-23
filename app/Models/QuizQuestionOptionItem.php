@@ -8,10 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class QuizQuestionOptionItem extends Model
 {
-    use SoftDeletes;
     use HasFactory;
-
-    protected $table = 'quiz_question_options_items';
+    use SoftDeletes;
 
     protected $fillable = [
         'quiz_question_option_id',

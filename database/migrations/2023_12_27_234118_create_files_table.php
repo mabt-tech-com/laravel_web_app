@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('files', function (Blueprint $table) {
             $table->id();
 
+            $table->unsignedBigInteger('company_id');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
+
             $table->tinytext('type');
 
             $table->tinytext('file_name')->nullable();

@@ -19,7 +19,8 @@ class TrainingsController extends Controller
 
             $trainings_query_builder = Training::where('company_id', request('company_id'))
                 ->with('categories', 'tags', 'instructor.role.permissions', 'chapters.lessons', 'reviews', 'image', 'video', 'quiz.quiz_questions.quiz_question_options.quiz_question_option_items', 'chapters.quiz.quiz_questions.quiz_question_options.quiz_question_option_items')
-                ->withAvg('reviews', 'rating');
+                ->withAvg('reviews', 'rating')
+                ->latest();
 
             if (request('instructor_id')) {
                 $trainings_query_builder->where('instructor_id', request('instructor_id'));
@@ -58,6 +59,7 @@ class TrainingsController extends Controller
             return response()->json($trainings);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -99,6 +101,7 @@ class TrainingsController extends Controller
             ]);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -120,6 +123,7 @@ class TrainingsController extends Controller
             return response()->json(['message' => 'Categories assigned to training successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -141,9 +145,11 @@ class TrainingsController extends Controller
             return response()->json(['message' => 'Tags assigned to training successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+
     public function show($id)
     {
         try {
@@ -155,6 +161,7 @@ class TrainingsController extends Controller
             return response()->json($training);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -163,7 +170,6 @@ class TrainingsController extends Controller
     {
         try {
             request()->validate([
-                'company_id' => 'required|integer|exists:companies,id',
                 'instructor_id' => 'required|integer|exists:users,id',
                 'label' => 'required|string|min:1|max:255',
                 'description' => 'required|string|min:1|max:255',
@@ -175,7 +181,7 @@ class TrainingsController extends Controller
                 'video_id' => 'nullable|integer|exists:files,id',
             ]);
 
-            $training = Training::where('company_id', request('company_id'))->findOrFail($id);
+            $training = Training::findOrFail($id);
 
             $training->instructor_id = request('instructor_id');
             $training->label = request('label');
@@ -195,6 +201,7 @@ class TrainingsController extends Controller
             return response()->json(['message' => 'Training updated successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -221,6 +228,7 @@ class TrainingsController extends Controller
             return response()->json(['message' => 'Training deleted successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -230,11 +238,12 @@ class TrainingsController extends Controller
         try {
             $orders = Training::findOrFail($id)->orders()->where('order_items.training_id', $id)->where('type', Order::ORDER)->get();
 
-            $students = (new Order)->students_from_orders($orders);
+            $students = (new Order())->students_from_orders($orders);
 
             return response()->json($students);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }

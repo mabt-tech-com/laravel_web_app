@@ -10,6 +10,7 @@ class Voucher extends Model
     use HasFactory;
 
     protected $fillable = [
+        'company_id',
         'code',
         'title',
         'description',
@@ -20,6 +21,11 @@ class Voucher extends Model
     protected $casts = [
         'expires_at' => 'date',
     ];
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
 
     public function trainings()
     {

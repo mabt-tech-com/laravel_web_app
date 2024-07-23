@@ -14,11 +14,14 @@ return new class extends Migration
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
 
+            $table->unsignedBigInteger('company_id');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
+
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');;
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->unsignedBigInteger('training_id')->nullable();
-            $table->foreign('training_id')->references('id')->on('trainings')->onDelete('cascade');;
+            $table->foreign('training_id')->references('id')->on('trainings')->onDelete('cascade');
 
             $table->unsignedBigInteger('quiz_id')->nullable();
             $table->foreign('quiz_id')->references('id')->on('quizzes')->onDelete('cascade');

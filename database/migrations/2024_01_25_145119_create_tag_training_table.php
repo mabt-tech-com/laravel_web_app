@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
 
             $table->unsignedBigInteger('training_id')->nullable();
-            $table->foreign('training_id')->references('id')->on('trainings')->onDelete('cascade');;
+            $table->foreign('training_id')->references('id')->on('trainings')->onDelete('cascade');
 
             $table->unsignedBigInteger('tag_id')->nullable();
-            $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');;
+            $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
 
             $table->timestamps();
             $table->softDeletes();

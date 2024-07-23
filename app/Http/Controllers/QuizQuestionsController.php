@@ -10,11 +10,13 @@ class QuizQuestionsController extends Controller
     {
         try {
             $quiz_questions = QuizQuestion::with('quiz_question_type', 'quiz_question_options')
+                ->latest()
                 ->paginate(config('custom_config.pagination_items'));
 
             return response()->json($quiz_questions);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -46,6 +48,7 @@ class QuizQuestionsController extends Controller
             ]);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -58,6 +61,7 @@ class QuizQuestionsController extends Controller
             return response()->json($quiz_question);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -86,6 +90,7 @@ class QuizQuestionsController extends Controller
             return response()->json(['message' => 'QuizQuestion updated successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -104,6 +109,7 @@ class QuizQuestionsController extends Controller
             return response()->json(['message' => 'QuizQuestion deleted successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }

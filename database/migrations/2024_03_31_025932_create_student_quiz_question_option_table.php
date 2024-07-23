@@ -23,6 +23,9 @@ return new class extends Migration
             $table->unsignedBigInteger('quiz_question_option_id');
             $table->foreign('quiz_question_option_id')->references('id')->on('quiz_question_options')->onDelete('cascade');
 
+            $table->unsignedBigInteger('quiz_question_option_item_id')->nullable();
+            $table->foreign('quiz_question_option_item_id')->references('id')->on('quiz_question_option_items')->onDelete('cascade');
+
             $table->timestamps();
             $table->softDeletes();
         });

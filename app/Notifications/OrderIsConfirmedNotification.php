@@ -35,12 +35,12 @@ class OrderIsConfirmedNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('Your Order is confirmed')
             ->greeting('Thank You For Your Order !')
             ->line('We are thrilled to inform you that your order has been successfully confirmed !')
-            ->line('Order : #' . $this->order->id)
-            ->line('Date :' . $this->order->created_at)
+            ->line('Order : #'.$this->order->id)
+            ->line('Date :'.$this->order->created_at)
             ->action('Thank you for choosing The Team. We appreciate your business and look forward to serving you again in the future.', url('/'));
     }
 
@@ -52,7 +52,7 @@ class OrderIsConfirmedNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+
         ];
     }
 }

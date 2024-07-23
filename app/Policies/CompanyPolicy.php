@@ -14,6 +14,7 @@ class CompanyPolicy
     public function viewAny(User $user): bool
     {
         return true;
+
         return auth()->user()->permissions()->pluck('id')->contains(Permission::COMPANIES_LIST);
     }
 
@@ -23,6 +24,7 @@ class CompanyPolicy
     public function view(User $user, Company $company): bool
     {
         return true;
+
         return auth()->user()->permissions()->pluck('id')->contains(Permission::COMPANIES_VIEW) && auth()->user()->company_id === $company->id;
     }
 
@@ -32,6 +34,7 @@ class CompanyPolicy
     public function create(User $user): bool
     {
         return true;
+
         return auth()->user()->permissions()->pluck('id')->contains(Permission::COMPANIES_CREATE);
     }
 
@@ -41,6 +44,7 @@ class CompanyPolicy
     public function update(User $user, Company $company): bool
     {
         return true;
+
         return auth()->user()->permissions()->pluck('id')->contains(Permission::COMPANIES_UPDATE) && auth()->user()->company_id === $company->id;
     }
 
@@ -50,6 +54,7 @@ class CompanyPolicy
     public function delete(User $user, Company $company): bool
     {
         return true;
+
         return auth()->user()->permissions()->pluck('id')->contains(Permission::COMPANIES_DELETE) && auth()->user()->company_id === $company->id;
     }
 
@@ -59,6 +64,7 @@ class CompanyPolicy
     public function restore(User $user, Company $company): bool
     {
         return true;
+
         return auth()->user()->permissions()->pluck('id')->contains(Permission::COMPANIES_RESTORE) && auth()->user()->company_id === $company->id;
     }
 
@@ -68,6 +74,7 @@ class CompanyPolicy
     public function forceDelete(User $user, Company $company): bool
     {
         return true;
+
         return auth()->user()->permissions()->pluck('id')->contains(Permission::COMPANIES_FORCE_DELETE);
     }
 }

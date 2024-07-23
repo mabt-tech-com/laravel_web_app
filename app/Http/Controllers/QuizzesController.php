@@ -17,6 +17,7 @@ class QuizzesController extends Controller
     {
         try {
             request()->validate([
+                'company_id' => 'required|integer|exists:companies,id',
                 'chapter_id' => 'sometimes|integer|exists:chapters,id',
                 'is_quiz' => 'sometimes|boolean',
                 'is_exam' => 'sometimes|boolean',
@@ -25,7 +26,9 @@ class QuizzesController extends Controller
                 'is_published' => 'sometimes|boolean',
             ]);
 
-            $quizzes_query_builder = Quiz::with('categories', 'reviews', 'chapter', 'quiz_questions.quiz_question_type', 'quiz_questions.quiz_question_options.quiz_question_option_items')
+            $quizzes_query_builder = Quiz::where('company_id', request('company_id'))
+                ->with('categories', 'reviews', 'chapter', 'quiz_questions.quiz_question_type', 'quiz_questions.quiz_question_options.quiz_question_option_items')
+                ->latest()
                 ->withAvg('reviews', 'rating');
 
             if (request('is_quiz')) {
@@ -67,6 +70,7 @@ class QuizzesController extends Controller
             return response()->json($quizzes);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -75,6 +79,7 @@ class QuizzesController extends Controller
     {
         try {
             request()->validate([
+                'company_id' => 'required|integer|exists:companies,id',
                 'training_id' => 'nullable|integer|exists:trainings,id',
                 'chapter_id' => 'nullable|integer|exists:chapters,id',
                 'label' => 'required|string|min:1|max:255',
@@ -100,6 +105,7 @@ class QuizzesController extends Controller
             }
 
             $quiz = Quiz::create([
+                'company_id' => request('company_id'),
                 'training_id' => request('training_id'),
                 'chapter_id' => request('chapter_id'),
                 'label' => request('label'),
@@ -122,6 +128,7 @@ class QuizzesController extends Controller
             ]);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -179,7 +186,6 @@ class QuizzesController extends Controller
             ]);
 
             for ($i = 0; $i < count(request('quiz_questions')); $i++) {
-
                 $quiz_question = QuizQuestion::create([
                     'quiz_id' => $quiz->id,
                     'quiz_question_type_id' => request('quiz_questions')[$i]['quiz_question_type_id'],
@@ -189,24 +195,20 @@ class QuizzesController extends Controller
                 ]);
 
                 for ($j = 0; $j < count(request('quiz_questions')[$i]['quiz_question_options']); $j++) {
-
                     $quiz_question_option = QuizQuestionOption::create([
                         'quiz_question_id' => $quiz_question->id,
                         'label' => request('quiz_questions')[$i]['quiz_question_options'][$j]['label'],
                         'is_correct' => request('quiz_questions')[$i]['quiz_question_options'][$j]['is_correct'],
                     ]);
 
-                    if (request('quiz_questions')[$i]['quiz_question_type_id'] == QuizQuestionType::DRAG_AND_DROP_ID) {
+                    if (request('quiz_questions')[$i]['quiz_question_type_id'] === QuizQuestionType::DRAG_AND_DROP_ID) {
                         for ($k = 0; $k < count(request('quiz_questions')[$i]['quiz_question_options'][$j]['quiz_question_option_items']); $k++) {
-
                             $quiz_question_option_item = QuizQuestionOptionItem::create([
                                 'quiz_question_option_id' => $quiz_question_option->id,
                                 'label' => request('quiz_questions')[$i]['quiz_question_options'][$j]['quiz_question_option_items'][$k]['label'],
                             ]);
-
                         }
                     }
-
                 }
             }
 
@@ -219,6 +221,7 @@ class QuizzesController extends Controller
             // }
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -232,6 +235,7 @@ class QuizzesController extends Controller
             return response()->json($quiz);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -286,6 +290,7 @@ class QuizzesController extends Controller
             return response()->json(['message' => 'Quiz updated successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -347,7 +352,6 @@ class QuizzesController extends Controller
         $quiz->quiz_questions()->delete();
 
         for ($i = 0; $i < count(request('quiz_questions')); $i++) {
-
             $quiz_question = QuizQuestion::create([
                 'quiz_id' => $quiz->id,
                 'quiz_question_type_id' => request('quiz_questions')[$i]['quiz_question_type_id'],
@@ -357,24 +361,20 @@ class QuizzesController extends Controller
             ]);
 
             for ($j = 0; $j < count(request('quiz_questions')[$i]['quiz_question_options']); $j++) {
-
                 $quiz_question_option = QuizQuestionOption::create([
                     'quiz_question_id' => $quiz_question->id,
                     'label' => request('quiz_questions')[$i]['quiz_question_options'][$j]['label'],
                     'is_correct' => request('quiz_questions')[$i]['quiz_question_options'][$j]['is_correct'],
                 ]);
 
-                if (request('quiz_questions')[$i]['quiz_question_type_id'] == QuizQuestionType::DRAG_AND_DROP_ID) {
+                if (request('quiz_questions')[$i]['quiz_question_type_id'] === QuizQuestionType::DRAG_AND_DROP_ID) {
                     for ($k = 0; $k < count(request('quiz_questions')[$i]['quiz_question_options'][$j]['quiz_question_option_items']); $k++) {
-
                         $quiz_question_option_item = QuizQuestionOptionItem::create([
                             'quiz_question_option_id' => $quiz_question_option->id,
                             'label' => request('quiz_questions')[$i]['quiz_question_options'][$j]['quiz_question_option_items'][$k]['label'],
                         ]);
-
                     }
                 }
-
             }
         }
 
@@ -407,6 +407,7 @@ class QuizzesController extends Controller
             return response()->json(['message' => 'Quiz deleted successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -425,24 +426,21 @@ class QuizzesController extends Controller
             $attempt = QuizStudentAttempt::where('quiz_id', request('quiz_id'))->where('student_id', request('student_id'))->latest()->first()?->attempt + 1 ?? 1;
 
             if ($quiz->max_attempts > 0 && $attempt > $quiz->max_attempts) {
-
                 return response()->json(['message' => 'Quiz cannot be started, too many attempts.'], 401);
-
-            } else {
-
-                $quiz_student_attempt = QuizStudentAttempt::create([
-                    'quiz_id' => request('quiz_id'),
-                    'student_id' => request('student_id'),
-                    'attempt' => $attempt,
-                ]);
-
-                insert_in_history_table('start_student_quiz', $student->id, 'quiz_student_attempts');
-
-                return response()->json(['message' => 'Quiz started successfully.']);
             }
 
+            $quiz_student_attempt = QuizStudentAttempt::create([
+                'quiz_id' => request('quiz_id'),
+                'student_id' => request('student_id'),
+                'attempt' => $attempt,
+            ]);
+
+            insert_in_history_table('start_student_quiz', $student->id, 'quiz_student_attempts');
+
+            return response()->json(['message' => 'Quiz started successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -465,10 +463,8 @@ class QuizzesController extends Controller
                 $quiz_student_attempt->save();
 
                 for ($i = 0; $i < count(request('quiz_question_options_ids')); $i++) {
-
                     $quiz_question_option = QuizQuestionOption::with('quiz_question.quiz')->findOrFail(request('quiz_question_options_ids')[$i]);
 
-                    //! RAZI TO DO
                     $quiz_student_attempt->quiz_question_options()->attach(
                         $quiz_question_option->id,
                         [
@@ -478,7 +474,20 @@ class QuizzesController extends Controller
                     );
                 }
 
-                insert_in_history_table('save_student_quiz_question_option', request('student_id'), 'quiz_question_options');
+                for ($i = 0; $i < count(request('quiz_question_option_items_ids')); $i++) {
+                    $quiz_question_option_item = QuizQuestionOptionItem::with('quiz_question_option.quiz_question.quiz')->findOrFail(request('quiz_question_option_items_ids')[$i]);
+
+                    $quiz_student_attempt->quiz_question_option_items()->attach(
+                        $quiz_question_option_item->id,
+                        [
+                            'quiz_student_attempt_id' => $quiz_student_attempt->id,
+                            'quiz_question_id' => $quiz_question_option_item->quiz_question_option->quiz_question->id,
+                            'quiz_question_option_id' => $quiz_question_option_item->quiz_question_option->id,
+                        ],
+                    );
+                }
+
+                insert_in_history_table('finish_student_quiz', request('student_id'), 'quiz_student_attempts');
 
                 $quiz_student_attempt = QuizStudentAttempt::where('quiz_id', request('quiz_id'))
                     ->where('student_id', request('student_id'))
@@ -489,14 +498,13 @@ class QuizzesController extends Controller
                     'message' => 'Quiz Options saved successfully.',
                     'quiz_student_attempt' => $quiz_student_attempt,
                 ]);
-
-            } else {
-                return response()->json([
-                    'message' => 'Quiz has not started ! Please start a quiz before finishing it.',
-                ], 500);
             }
+            return response()->json([
+                'message' => 'Quiz has not started ! Please start a quiz before finishing it.',
+            ], 500);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -512,6 +520,7 @@ class QuizzesController extends Controller
             return response()->json($quiz_student_attempt);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -533,6 +542,7 @@ class QuizzesController extends Controller
             return response()->json(['message' => 'Categories assigned to quiz successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }

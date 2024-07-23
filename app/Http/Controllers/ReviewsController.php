@@ -10,6 +10,7 @@ class ReviewsController extends Controller
     {
         try {
             request()->validate([
+                'company_id' => 'required|integer|exists:companies,id',
                 'training_id' => 'required|integer|exists:trainings,id',
                 'rating' => 'required|numeric|between:0,5',
                 'comment' => 'required|string',
@@ -17,6 +18,7 @@ class ReviewsController extends Controller
 
             $review = Review::updateOrCreate(
                 [
+                    'company_id' => request('company_id'),
                     'user_id' => auth()->user()->id,
                     'training_id' => request('training_id'),
                 ],
@@ -31,6 +33,7 @@ class ReviewsController extends Controller
             return response()->json(['message' => 'Review created successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -43,6 +46,7 @@ class ReviewsController extends Controller
             return response()->json($review);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -67,6 +71,7 @@ class ReviewsController extends Controller
             return response()->json(['message' => 'Review updated successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -83,6 +88,7 @@ class ReviewsController extends Controller
             return response()->json(['message' => 'Review deleted successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }

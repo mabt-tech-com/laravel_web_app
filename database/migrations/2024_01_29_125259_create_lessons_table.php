@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->unsignedBigInteger('chapter_id');
-            $table->foreign('chapter_id')->references('id')->on('chapters')->onDelete('cascade');;
+            $table->foreign('chapter_id')->references('id')->on('chapters')->onDelete('cascade');
 
             $table->string('label');
 

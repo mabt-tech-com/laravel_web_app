@@ -8,11 +8,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Training extends Model
 {
-    use SoftDeletes;
     use HasFactory;
+    use SoftDeletes;
 
     public const BEGINNER = 'Beginner';
+
     public const INTERMEDIATE = 'Intermediate';
+
     public const EXPERT = 'Expert';
 
     protected $appends = ['average_rating', 'total_ratings', 'total_sales'];
@@ -90,6 +92,11 @@ class Training extends Model
     public function quiz()
     {
         return $this->hasOne(Quiz::class);
+    }
+
+    public function certified_students()
+    {
+        return $this->belongsToMany(User::class, 'certifications', 'training_id', 'student_id')->withTimestamps();
     }
 
     public function getAverageRatingAttribute()

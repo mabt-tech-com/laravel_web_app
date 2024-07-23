@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
 
             $table->unsignedBigInteger('company_id')->nullable();
-            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');;
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
 
             $table->unsignedBigInteger('instructor_id');
-            $table->foreign('instructor_id')->references('id')->on('users')->onDelete('cascade');;
+            $table->foreign('instructor_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->string('label');
             $table->string('description');
@@ -28,10 +28,10 @@ return new class extends Migration
             $table->decimal('discounted_price')->nullable();
 
             $table->unsignedBigInteger('image_id')->nullable();
-            $table->foreign('image_id')->references('id')->on('files')->onDelete('cascade');;
+            $table->foreign('image_id')->references('id')->on('files')->onDelete('cascade');
 
             $table->unsignedBigInteger('video_id')->nullable();
-            $table->foreign('video_id')->references('id')->on('files')->onDelete('cascade');;
+            $table->foreign('video_id')->references('id')->on('files')->onDelete('cascade');
 
             $table->boolean('is_public')->default(true);
 

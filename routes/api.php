@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\CertificationsController;
 use App\Http\Controllers\ChaptersController;
 use App\Http\Controllers\CompaniesController;
 use App\Http\Controllers\ConfigController;
@@ -17,7 +18,6 @@ use App\Http\Controllers\TagsController;
 use App\Http\Controllers\TrainingsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\VouchersController;
-use App\Models\Quiz;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
@@ -34,8 +34,9 @@ Route::get('/', function () {
         // $items = User::with('quizzes.quiz_questions.quiz_question_options.quiz_question_option_items', 'quiz_questions.quiz_question_options.quiz_question_option_items', 'quiz_question_options')->get();
         // $items = QuizQuestionOption::with('students')->get();
         // $items = User::findOrFail(1)->quizzes->pivot->attempt;
-        $items = Quiz::isQuiz()->get();
+        // $items = Quiz::isQuiz()->get();
         // $items = Order::with('trainings', 'quizzes')->get();
+        // $items = Quiz::with('certified_students')->get();
 
         return response()->json($items);
     } catch (\Throwable $th) {
@@ -45,6 +46,7 @@ Route::get('/', function () {
 
 Route::get('/refresh_database', function () {
     logger('-- Refreshing DB --');
+
     return Artisan::call('migrate:fresh --seed --force');
 });
 
@@ -160,15 +162,21 @@ Route::middleware(['auth:api', 'check_if_user_is_blocked'])->group(function () {
         Route::get('/orders', 'index');
         Route::post('/order', 'store');
         Route::get('/order/{id}', 'show');
-        Route::post('/order/assign_trainings_to_students', 'assign_trainings_to_students');
         Route::post('/order/update_cart', 'update_cart');
         Route::post('/order/add_to_cart', 'add_to_cart');
         Route::post('/order/remove_from_cart', 'remove_from_cart');
         Route::post('/order/convert_cart_to_order/{student_id}', 'convert_cart_to_order');
+
+        Route::post('/order/assign_trainings_to_students', 'assign_trainings_to_students');
+        Route::post('/order/unassign_trainings_from_student', 'unassign_trainings_from_student');
+
         Route::post('/order/{id}', 'update');
         Route::delete('/order/{id}', 'destroy');
 
         Route::post('/cart/{id}/apply_coupon', 'apply_coupon');
+        Route::post('/cart/{id}/unapply_coupon','unapply_coupon');
+
+
     });
 
     Route::controller(CouponsController::class)->group(function () {
@@ -207,5 +215,15 @@ Route::middleware(['auth:api', 'check_if_user_is_blocked'])->group(function () {
         Route::get('/quiz/{id}', 'show');
         Route::post('/quiz/{id}', 'update');
         Route::delete('/quiz/{id}', 'destroy');
+    });
+
+    Route::controller(CertificationsController::class)->group(function () {
+        // Route::get('/certified_students_by_training/{id}', 'certified_students_by_training');
+        // Route::get('/certified_students_by_quiz/{id}', 'certified_students_by_quiz');
+        // Route::get('/certified_trainings_by_student/{id}', 'certified_trainings_by_student');
+        // Route::get('/certified_quizzes_by_student/{id}', 'certified_quizzes_by_student');
+        Route::post('/certification', 'store');
+        Route::get('/certification/{id}', 'show');
+        Route::delete('/certification/{id}', 'destroy');
     });
 });

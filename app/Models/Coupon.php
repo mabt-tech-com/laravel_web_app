@@ -10,6 +10,7 @@ class Coupon extends Model
     use HasFactory;
 
     protected $fillable = [
+        'company_id',
         'code',
         'title',
         'description',
@@ -26,6 +27,11 @@ class Coupon extends Model
         'starts_at' => 'date',
         'expires_at' => 'date',
     ];
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
 
     public function orders()
     {
@@ -49,6 +55,7 @@ class Coupon extends Model
         if (now()->greaterThan($this->expires_at)) {
             return 'Coupon has expired.';
         }
+
         return true;
     }
 }

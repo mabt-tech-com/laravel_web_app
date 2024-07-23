@@ -14,11 +14,13 @@ class LessonsController extends Controller
             ]);
 
             $lessons = Lesson::where('chapter_id', request('chapter_id'))
+                ->latest()
                 ->paginate(config('custom_config.pagination_items'));
 
             return response()->json($lessons);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -40,6 +42,7 @@ class LessonsController extends Controller
             return response()->json(['message' => 'Lessons reordered successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -50,7 +53,7 @@ class LessonsController extends Controller
             request()->validate([
                 'chapter_id' => 'required|integer|exists:chapters,id',
                 'label' => 'required|string|min:1|max:255',
-                'content' => 'required|string',
+                'content' => 'present',
             ]);
 
             $lesson = Lesson::create([
@@ -64,6 +67,7 @@ class LessonsController extends Controller
             return response()->json(['message' => 'Lesson created successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -76,6 +80,7 @@ class LessonsController extends Controller
             return response()->json($lesson);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -102,6 +107,7 @@ class LessonsController extends Controller
             return response()->json(['message' => 'Lesson updated successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -118,6 +124,7 @@ class LessonsController extends Controller
             return response()->json(['message' => 'Lesson deleted successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -145,6 +152,7 @@ class LessonsController extends Controller
             return response()->json(['message' => 'The relationship between user and lesson is successfully updated.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }

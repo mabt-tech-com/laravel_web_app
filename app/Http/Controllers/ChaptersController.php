@@ -15,11 +15,13 @@ class ChaptersController extends Controller
 
             $chapters = Chapter::where('training_id', request('training_id'))
                 ->with('lessons', 'quiz.quiz_questions.quiz_question_options.quiz_question_option_items')
+                ->latest()
                 ->paginate(config('custom_config.pagination_items'));
 
             return response()->json($chapters);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -41,6 +43,7 @@ class ChaptersController extends Controller
             return response()->json(['message' => 'Chapters reordered successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -68,6 +71,7 @@ class ChaptersController extends Controller
             ]);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -80,6 +84,7 @@ class ChaptersController extends Controller
             return response()->json($chapter);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -105,6 +110,7 @@ class ChaptersController extends Controller
             return response()->json(['message' => 'Chapter updated successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -122,6 +128,7 @@ class ChaptersController extends Controller
             return response()->json(['message' => 'Chapter deleted successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }

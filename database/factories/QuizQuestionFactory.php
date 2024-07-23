@@ -21,7 +21,7 @@ class QuizQuestionFactory extends Factory
         return [
             'quiz_id' => Quiz::all()->random()->id,
             'quiz_question_type_id' => QuizQuestionType::all()->random()->id,
-            'label' => fake()->paragraph() . ' ?',
+            'label' => fake()->paragraph().' ?',
             'tip' => fake()->sentence(),
             'explanation' => fake()->sentence(),
         ];

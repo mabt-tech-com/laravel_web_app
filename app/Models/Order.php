@@ -9,14 +9,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
 {
-    use SoftDeletes;
     use HasFactory;
+    use SoftDeletes;
 
     public const WISHLIST = 1;
+
     public const CART = 2;
+
     public const ORDER = 3;
 
     protected $fillable = [
+        'company_id',
         'student_id',
         'type',
         'order_status_id',
@@ -26,6 +29,11 @@ class Order extends Model
     ];
 
     protected $appends = ['discounted_price', 'total_price'];
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
 
     public function student()
     {
@@ -68,8 +76,9 @@ class Order extends Model
             $coupon = Coupon::findOrFail($this->coupon_id);
 
             if ($coupon->discount_percentage) {
-                return $this->total_price - ($this->total_price * ($coupon->discount_percentage / 100));
-            } else if ($coupon->discount_value) {
+                return $this->total_price - ($this->total_price * $coupon->discount_percentage / 100);
+            }
+            if ($coupon->discount_value) {
                 return $this->total_price - $coupon->discount_value;
             }
         }
@@ -86,7 +95,6 @@ class Order extends Model
     {
         $trainings = [];
         foreach ($orders as $order) {
-
             $order->load('trainings.instructor', 'trainings.image', 'trainings.chapters.lessons');
 
             foreach ($order->trainings as $training) {
@@ -95,6 +103,7 @@ class Order extends Model
                 }
             }
         }
+
         return $trainings;
     }
 
@@ -102,7 +111,6 @@ class Order extends Model
     {
         $quizzes = [];
         foreach ($orders as $order) {
-
             $order->load('quizzes');
 
             foreach ($order->quizzes as $quiz) {
@@ -111,6 +119,7 @@ class Order extends Model
                 }
             }
         }
+
         return $quizzes;
     }
 
@@ -120,6 +129,7 @@ class Order extends Model
         foreach ($orders as $order) {
             $students[] = User::with('lessons')->findOrFail($order->student_id);
         }
+
         return $students;
     }
 }

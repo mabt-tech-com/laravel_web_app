@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 use NunoMaduro\PhpInsights\Domain\Insights\ForbiddenDefineFunctions;
 use NunoMaduro\PhpInsights\Domain\Insights\ForbiddenFinalClasses;
@@ -105,11 +105,11 @@ return [
      */
 
     'requirements' => [
-//        'min-quality' => 0,
-//        'min-complexity' => 0,
-//        'min-architecture' => 0,
-//        'min-style' => 0,
-//        'disable-security-check' => false,
+        //        'min-quality' => 0,
+        //        'min-complexity' => 0,
+        //        'min-architecture' => 0,
+        //        'min-style' => 0,
+        //        'disable-security-check' => false,
     ],
 
     /*

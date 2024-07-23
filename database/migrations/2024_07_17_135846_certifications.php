@@ -11,18 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('chapters', function (Blueprint $table) {
+        Schema::create('certifications', function (Blueprint $table) {
             $table->id();
+
+            $table->unsignedBigInteger('student_id');
+            $table->foreign('student_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->unsignedBigInteger('training_id')->nullable();
             $table->foreign('training_id')->references('id')->on('trainings')->onDelete('cascade');
 
-            $table->string('label');
-
-            $table->integer('position')->default(0);
+            $table->unsignedBigInteger('quiz_id')->nullable();
+            $table->foreign('quiz_id')->references('id')->on('quizzes')->onDelete('cascade');
 
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('chapters');
+        Schema::dropIfExists('certifications');
     }
 };

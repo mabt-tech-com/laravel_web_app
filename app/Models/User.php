@@ -13,9 +13,9 @@ use Rappasoft\LaravelAuthenticationLog\Traits\AuthenticationLoggable;
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
     use AuthenticationLoggable;
-    use SoftDeletes;
     use HasFactory;
     use Notifiable;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -139,29 +139,15 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         $trainings = collect([]);
         foreach ($this->orders as $order) {
-
             $order->load('trainings');
 
             foreach ($order->trainings as $training) {
                 $trainings->push($training);
             }
         }
+
         return $trainings;
     }
-
-    // public function quizzes()
-    // {
-    //     $quizzes = collect([]);
-    //     foreach ($this->orders as $order) {
-
-    //         $order->load('quizzes');
-
-    //         foreach ($order->quizzes as $quiz) {
-    //             $quizzes->push($quiz);
-    //         }
-    //     }
-    //     return $quizzes;
-    // }
 
     public function quizzes()
     {
@@ -169,6 +155,16 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
             ->withPivot('attempt', 'finished_at')
             ->using(QuizStudentAttempt::class)
             ->withTimestamps();
+    }
+
+    public function certified_trainings()
+    {
+        return $this->belongsToMany(Training::class, 'certifications', 'student_id', 'training_id')->withTimestamps();
+    }
+
+    public function certified_quizzes()
+    {
+        return $this->belongsToMany(Quiz::class, 'certifications', 'student_id', 'quiz_id')->withTimestamps();
     }
 
     public function delete_image()

@@ -2,10 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Company;
 use App\Models\Role;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -25,8 +24,8 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
+            'company_id' => Company::all()->random()->id,
             'role_id' => fake()->randomElement([Role::STUDENT, Role::INSTRUCTOR, Role::CONTENT_MANAGER, Role::ADMIN]),
-            'company_id' => 1,
             'first_name' => fake()->firstNameMale(),
             'last_name' => fake()->firstNameFemale(),
             'email' => fake()->unique()->safeEmail(),

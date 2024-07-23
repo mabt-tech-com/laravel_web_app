@@ -57,6 +57,7 @@ class AuthController extends Controller
             ]);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -99,7 +100,7 @@ class AuthController extends Controller
         }
     }
 
-    public function verify_email($id)
+/*    public function verify_email($id)
     {
         try {
             $user = User::findOrFail($id);
@@ -112,9 +113,32 @@ class AuthController extends Controller
             return response()->json(['message' => 'Email has been verified.']);
         } catch (\Throwable $th) {
             report($th);
+
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }*/
+
+
+    public function verify_email($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+
+            if ($user->hasVerifiedEmail()) {
+                return response()->view('verified')->header('Refresh', '5;url=' . env('FRONTEND_URL'));
+            }
+
+            $user->markEmailAsVerified();
+
+            return response()->view('verified')->header('Refresh', '5;url=' . env('FRONTEND_URL'));
+        } catch (\Throwable $th) {
+            report($th);
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+
+
+
 
     public function resend_verification_email()
     {
@@ -131,6 +155,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Email verification link has been resent.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -145,6 +170,7 @@ class AuthController extends Controller
             return response()->json($user);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -160,9 +186,11 @@ class AuthController extends Controller
                 return response()->json(['message' => 'Reset password link sent on your email.',
                 ]);
             }
+
             return response()->json(['message' => 'An error occured, please try again later.'], 500);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -191,6 +219,7 @@ class AuthController extends Controller
             : response()->json(['message' => 'An error occured, please try again later.'], 500);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -215,6 +244,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Your password has been successfully reset.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }

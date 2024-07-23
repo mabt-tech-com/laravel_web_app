@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
 
             $table->unsignedBigInteger('company_id')->nullable();
-            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');;
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
 
             $table->unsignedBigInteger('role_id')->nullable();
-            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');;
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
 
             $table->tinytext('first_name');
             $table->tinytext('last_name');
@@ -29,7 +29,7 @@ return new class extends Migration
             $table->tinytext('phone_number')->nullable();
 
             $table->unsignedBigInteger('image_id')->nullable();
-            $table->foreign('image_id')->references('id')->on('files')->onDelete('cascade');;
+            $table->foreign('image_id')->references('id')->on('files')->onDelete('cascade');
 
             $table->tinytext('password');
 

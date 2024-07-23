@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Category;
 use App\Models\Chapter;
+use App\Models\Company;
 use App\Models\Quiz;
 use App\Models\Training;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -21,6 +22,7 @@ class QuizFactory extends Factory
     public function definition(): array
     {
         return [
+            'company_id' => Company::all()->random()->id,
             'training_id' => fake()->randomElement([true, false]) ? null : Training::all()->random()->id,
             'chapter_id' => fake()->randomElement([true, false]) ? null : Chapter::all()->random()->id,
             'label' => fake()->country(),

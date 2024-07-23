@@ -13,11 +13,13 @@ class UsersController extends Controller
         try {
             $this->authorize('viewAny', User::class);
 
-            $users_query_builder = User::with('role.permissions', 'image', 'lessons', 'trainings_as_instructor');
+            request()->validate([
+                'company_id' => 'required|integer|exists:companies,id',
+            ]);
 
-            if (request('company_id')) {
-                $users_query_builder = $users_query_builder->where('company_id', request('company_id'));
-            }
+            $users_query_builder = User::where('company_id', request('company_id'))
+                ->with('role.permissions', 'image', 'lessons', 'trainings_as_instructor')
+                ->latest();
 
             if (request('role_id')) {
                 $users_query_builder = $users_query_builder->where('role_id', request('role_id'));
@@ -28,6 +30,7 @@ class UsersController extends Controller
             return response()->json($users);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -42,6 +45,7 @@ class UsersController extends Controller
             return response()->json($user);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -50,9 +54,9 @@ class UsersController extends Controller
     {
         try {
             request()->validate([
-                'role_id' => 'nullable|integer|exists:roles,id',
-                'first_name' => 'nullable|string|min:1|max:255',
-                'last_name' => 'nullable|string|min:1|max:255',
+                'role_id' => 'required|integer|exists:roles,id',
+                'first_name' => 'required|string|min:1|max:255',
+                'last_name' => 'required|string|min:1|max:255',
                 'phone_number' => 'nullable|string|min:1',
                 'password' => 'nullable|string|confirmed|min:6',
                 'image_id' => 'nullable|integer|exists:files,id',
@@ -64,33 +68,18 @@ class UsersController extends Controller
 
             $this->authorize('update', $user);
 
-            if (request('role_id')) {
-                $user->role_id = request('role_id');
-            }
-            if (request('first_name')) {
-                $user->first_name = request('first_name');
-            }
-            if (request('last_name')) {
-                $user->last_name = request('last_name');
-            }
-            if (request('phone_number')) {
-                $user->phone_number = request('phone_number');
-            }
-            if (request('password')) {
-                $user->password = bcrypt(request('password'));
-            }
-            if (request('birthday')) {
-                $user->birthday = request('birthday');
-            }
-            if (request('bio')) {
-                $user->bio = request('bio');
-            }
-            if (request('image_id')) {
-                $user->image_id = request('image_id');
-            }
-            if (request('is_blocked') == true) {
+            $user->role_id = request('role_id');
+            $user->first_name = request('first_name');
+            $user->last_name = request('last_name');
+            $user->phone_number = request('phone_number');
+            // $user->password = bcrypt(request('password'));
+            $user->birthday = request('birthday');
+            $user->bio = request('bio');
+            $user->image_id = request('image_id');
+
+            if (request('is_blocked') === true) {
                 $user->blocked_at = now();
-            } else if (request('is_blocked') == false) {
+            } elseif (request('is_blocked') === false) {
                 $user->blocked_at = null;
             }
 
@@ -99,6 +88,7 @@ class UsersController extends Controller
             return response()->json(['message' => 'User updated successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -121,6 +111,7 @@ class UsersController extends Controller
             return response()->json(['message' => 'User deleted successfully.']);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -135,6 +126,7 @@ class UsersController extends Controller
             return response()->json($trainings);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -144,11 +136,12 @@ class UsersController extends Controller
         try {
             $orders = User::findOrFail($id)->orders()->with('trainings.instructor', 'trainings.reviews', 'trainings.chapters.lessons')->where('orders.student_id', $id)->where('type', Order::ORDER)->get();
 
-            $trainings = (new Order)->trainings_from_orders($orders);
+            $trainings = (new Order())->trainings_from_orders($orders);
 
             return response()->json($trainings);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -158,11 +151,12 @@ class UsersController extends Controller
         try {
             $orders = User::findOrFail($id)->orders()->with('quizzes.training', 'quizzes.quiz_questions.quiz_question_type', 'quizzes.quiz_questions.quiz_question_options')->where('orders.student_id', $id)->where('type', Order::ORDER)->get();
 
-            $quizzes = (new Order)->quizzes_from_orders($orders);
+            $quizzes = (new Order())->quizzes_from_orders($orders);
 
             return response()->json($quizzes);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -179,6 +173,7 @@ class UsersController extends Controller
             return response()->json($orders);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
@@ -194,6 +189,7 @@ class UsersController extends Controller
             return response()->json($orders);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }

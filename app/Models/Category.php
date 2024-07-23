@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    use SoftDeletes;
     use HasFactory;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.

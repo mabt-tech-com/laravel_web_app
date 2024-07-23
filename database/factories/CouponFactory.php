@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Coupon;
+use App\Models\Company;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,11 +17,11 @@ class CouponFactory extends Factory
      */
     public function definition(): array
     {
-
-        // Randomly choose whether to apply discount percentage or discount value
+       // Randomly choose whether to apply discount percentage or discount value
         $usePercentage = fake()->boolean;
-
+        
         return [
+            'company_id' => Company::all()->random()->id,
             'code' => fake()->swiftBicNumber(),
             'title' => fake()->sentence(),
             'description' => fake()->sentence(),

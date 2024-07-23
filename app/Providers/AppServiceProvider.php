@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
         Model::shouldBeStrict();
 
         ResetPassword::createUrlUsing(function (User $user, $token) {
-            return config('custom_config.front_link') . '/reset-password?token=' . $token . '&email=' . urlencode($user->email);
+            return config('custom_config.front_link').'/reset-password?token='.$token.'&email='.urlencode($user->email);
         });
     }
 }

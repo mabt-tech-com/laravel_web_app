@@ -10,9 +10,13 @@ class Role extends Model
     use SoftDeletes;
 
     public const STUDENT = 1;
+
     public const INSTRUCTOR = 2;
+
     public const CONTENT_MANAGER = 3;
+
     public const ADMIN = 4;
+
     public const SUPER_ADMIN = 5;
 
     /**

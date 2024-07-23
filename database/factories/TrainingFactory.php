@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Category;
+use App\Models\Company;
 use App\Models\File;
 use App\Models\Role;
 use App\Models\Tag;
@@ -25,7 +26,7 @@ class TrainingFactory extends Factory
         $user_id = User::where('role_id', Role::INSTRUCTOR)->get()->random()->id;
 
         return [
-            'company_id' => 1,
+            'company_id' => Company::all()->random()->id,
             'instructor_id' => $user_id,
             'label' => fake()->country(),
             'description' => fake()->sentence(),

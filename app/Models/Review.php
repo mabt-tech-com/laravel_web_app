@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Review extends Model
 {
-    use SoftDeletes;
     use HasFactory;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -17,12 +17,18 @@ class Review extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'company_id',
         'training_id',
         'quiz_id',
         'user_id',
         'rating',
         'comment',
     ];
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
 
     public function training()
     {

@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Company;
+use App\Models\Certification;
 use App\Models\Quiz;
 use App\Models\Role;
 use App\Models\Training;
@@ -10,9 +10,9 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Review>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Certification>
  */
-class ReviewFactory extends Factory
+class CertificationFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -22,12 +22,9 @@ class ReviewFactory extends Factory
     public function definition(): array
     {
         return [
-            'company_id' => Company::all()->random()->id,
+            'student_id' => User::where('role_id', Role::STUDENT)->get()->random()->id,
             'training_id' => Training::all()->random()->id,
             'quiz_id' => Quiz::all()->random()->id,
-            'user_id' => User::where('role_id', Role::STUDENT)->get()->random()->id,
-            'rating' => fake()->randomFloat(2, 0, 5),
-            'comment' => fake()->sentence(),
         ];
     }
 }

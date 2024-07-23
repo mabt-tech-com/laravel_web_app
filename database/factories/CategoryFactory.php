@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Company;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,7 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'company_id' => 1,
+            'company_id' => Company::all()->random()->id,
             'label' => fake()->firstName(),
         ];
     }

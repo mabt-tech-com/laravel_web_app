@@ -8,14 +8,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Quiz extends Model
 {
-    use SoftDeletes;
     use HasFactory;
+    use SoftDeletes;
 
     protected $table = 'quizzes';
 
     protected $appends = ['average_rating', 'total_ratings', 'total_sales'];
 
     protected $fillable = [
+        'company_id',
         'training_id',
         'chapter_id',
         'label',
@@ -38,6 +39,11 @@ class Quiz extends Model
     public function scopeIsExam($query)
     {
         $query->whereNull('chapter_id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 
     public function training()
@@ -81,6 +87,11 @@ class Quiz extends Model
     public function vouchers()
     {
         return $this->belongsToMany(Voucher::class);
+    }
+
+    public function certified_students()
+    {
+        return $this->belongsToMany(User::class, 'certifications', 'quiz_id', 'student_id')->withTimestamps();
     }
 
     public function getTotalOrdersAttribute()

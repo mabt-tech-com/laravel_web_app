@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Company;
 use App\Models\Quiz;
 use App\Models\Training;
 use App\Models\Voucher;
@@ -20,6 +21,7 @@ class VoucherFactory extends Factory
     public function definition(): array
     {
         return [
+            'company_id' => Company::all()->random()->id,
             'code' => fake()->swiftBicNumber(),
             'title' => fake()->sentence(),
             'description' => fake()->sentence(),

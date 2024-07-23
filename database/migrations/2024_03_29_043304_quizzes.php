@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('quizzes', function (Blueprint $table) {
             $table->id();
 
+            $table->unsignedBigInteger('company_id');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
+
             $table->unsignedBigInteger('training_id')->nullable();
             $table->foreign('training_id')->references('id')->on('trainings')->onDelete('cascade');
 

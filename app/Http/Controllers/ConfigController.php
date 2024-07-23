@@ -24,6 +24,7 @@ class ConfigController extends Controller
             return response()->json($config);
         } catch (\Throwable $th) {
             report($th);
+
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }

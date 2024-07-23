@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Company extends Model
 {
-    use SoftDeletes;
     use HasFactory;
+    use SoftDeletes;
 
     protected $appends = ['number_of_ratings', 'average_rating'];
 
@@ -60,12 +60,50 @@ class Company extends Model
         return $this->hasMany(Training::class);
     }
 
+    public function quizzes()
+    {
+        return $this->hasMany(Category::class);
+    }
+
+    public function files()
+    {
+        return $this->hasMany(File::class);
+    }
+
+    public function coupons()
+    {
+        return $this->hasMany(Coupon::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Category::class);
+    }
+
+    public function vouchers()
+    {
+        return $this->hasMany(Category::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Category::class);
+    }
+
+    public function certifications()
+    {
+        return $this->hasMany(Category::class);
+    }
+
     public function getNumberOfRatingsAttribute()
     {
+        $this->load('trainings');
         return $this->trainings->count('number_of_ratings');
     }
+
     public function getAverageRatingAttribute()
     {
+        $this->load('trainings');
         return round($this->trainings->avg('average_rating'), 1);
     }
 }
