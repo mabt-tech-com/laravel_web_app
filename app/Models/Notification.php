@@ -18,8 +18,8 @@ class Notification extends Model
     protected $fillable = [
         'title',
         'message',
-        'user_id',  // null for all users
-        'role_id', // null for all users
+        //'user_id',  // null for all users
+        //'role_id', // null for all users
         'scheduled_at', // null for immediate
         'sent_at',
         'status',
@@ -36,15 +36,15 @@ class Notification extends Model
         'deleted_at',
     ];
 
-    public function user()
+/*    public function user()
     {
         return $this->belongsTo(User::class);
-    }
+    }*/
 
-    public function role()
+/*    public function role()
     {
         return $this->belongsTo(Role::class);
-    }
+    }*/
 
     public function scopePending($query)
     {

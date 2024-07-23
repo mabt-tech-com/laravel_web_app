@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -18,7 +19,7 @@ class NotificationController extends Controller
     {
         try {
             Log::info('Memory usage before query: ' . memory_get_usage());
-            $notifications = Notification::paginate(10);
+            $notifications = Notification::paginate(10); // Adding pagination
             Log::info('Memory usage after query: ' . memory_get_usage());
             return response()->json($notifications);
         } catch (\Exception $e) {
@@ -48,25 +49,16 @@ class NotificationController extends Controller
             $request->validate([
                 'title' => 'required|string|max:255',
                 'message' => 'required|string',
-                'user_id' => 'nullable|exists:users,id',
-                'role_id' => 'nullable|exists:roles,id',
                 'scheduled_at' => 'nullable|date',
                 'send_via_smtp' => 'boolean',
             ]);
 
-            // Ensure that either user_id or role_id is set, but not both
-            if (isset($request->user_id) && isset($request->role_id)) {
-                return response()->json(['error' => 'You can only specify either user_id or role_id, not both'], 422);
-            }
-
             $notification = Notification::create($request->all());
 
-            // Schedule the notification if scheduled_at is set
             if ($notification->scheduled_at) {
                 Log::info('Scheduled notification for: ' . $notification->scheduled_at);
                 $this->sendNotification($notification); // Placeholder for actual scheduling logic
             } else {
-                // Send the notification immediately
                 $this->sendNotification($notification);
             }
 
@@ -86,16 +78,9 @@ class NotificationController extends Controller
             $request->validate([
                 'title' => 'string|max:255',
                 'message' => 'string',
-                'user_id' => 'nullable|exists:users,id',
-                'role_id' => 'nullable|exists:roles,id',
                 'scheduled_at' => 'nullable|date',
                 'send_via_smtp' => 'boolean',
             ]);
-
-            // Ensure that either user_id or role_id is set, but not both
-            if (isset($request->user_id) && isset($request->role_id)) {
-                return response()->json(['error' => 'You can only specify either user_id or role_id, not both'], 422);
-            }
 
             $notification->update($request->all());
 
@@ -182,9 +167,14 @@ class NotificationController extends Controller
         try {
             // Logic to send in-app notification
             if ($notification->send_via_smtp) {
-                $user = $notification->user;
-                if ($user) {
-                    Mail::to($user->email)->send(new \App\Mail\NotificationMail($notification));
+                // Send the notification to all users
+                $users = User::all();
+                foreach ($users as $user) {
+                    $message = "This is a notification: " . $notification->title;
+                    Mail::raw($message, function ($mail) use ($user, $notification) {
+                        $mail->to($user->email)
+                            ->subject($notification->title);
+                    });
                 }
             }
 
