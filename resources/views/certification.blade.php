@@ -26,7 +26,7 @@
             <span style="font-size:30px">{{ $training_label }}</span> <br /><br />
             <span style="font-size:20px">avec un score de<b>90%</b></span> <br /><br /><br /><br />
             <span style="font-size:25px"><i>le</i></span><br>
-            <span style="font-size:30px">{{ now() }}</span> <br /><br />
+            <span style="font-size:30px">{{ $created_at }}</span> <br /><br />
         </div>
     </div>
 

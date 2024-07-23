@@ -104,6 +104,7 @@ class CertificationsController extends Controller
             $data = [
                 'user_full_name' => $certification->student->full_name,
                 'training_label' => $certification->training->label,
+                'created_at' => $certification->created_at,
             ];
 
             $pdf = Pdf::loadView('certification', $data)->setPaper('A4', 'landscape');
