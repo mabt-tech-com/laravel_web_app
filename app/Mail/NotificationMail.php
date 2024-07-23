@@ -13,15 +13,28 @@ class NotificationMail extends Mailable
 
     public Notification $notification;
 
+    /**
+     * Create a new message instance.
+     *
+     * @return void
+     */
     public function __construct(Notification $notification)
     {
         $this->notification = $notification;
     }
 
-    public function build()
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
+    public function build(): static
     {
         return $this->subject($this->notification->title)
             ->view('emails.notification')
-            ->with(['message' => $this->notification->message]);
+            ->with([
+                'title' => $this->notification->title,
+                'message' => $this->notification->message,
+            ]);
     }
 }

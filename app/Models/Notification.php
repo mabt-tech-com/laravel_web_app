@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
+
+
+// @var array<int, string>
+
 class Notification extends Model
 {
     use HasFactory, SoftDeletes;
@@ -82,7 +86,7 @@ class Notification extends Model
         return $query->where('read', true);
     }
 
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 

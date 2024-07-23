@@ -19,7 +19,9 @@ use App\Http\Controllers\TagsController;
 use App\Http\Controllers\TrainingsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\VouchersController;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -239,6 +241,15 @@ Route::middleware(['auth:api', 'check_if_user_is_blocked'])->group(function () {
         Route::post('/notifications/{id}/unread', 'markAsUnread');
         Route::post('/notifications/{id}/archive', 'archive');
         Route::post('/notifications/{id}/unarchive', 'unarchive');
+
+        Route::get('/test-notifications', function () {
+            Log::info('Memory usage before query: ' . memory_get_usage());
+            $notifications = Notification::limit(10)->get(); // Test with a small subset
+            Log::info('Memory usage after query: ' . memory_get_usage());
+            return response()->json($notifications);
+        });
+
+
     });
 
 
