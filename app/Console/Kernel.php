@@ -26,10 +26,11 @@ class Kernel extends ConsoleKernel
     }
 
 
-    protected function schedule_notif(Schedule $schedule)
+    protected function schedule_notifs(Schedule $schedule)
     {
         $schedule->call(function () {
             Notification::where('created_at', '<', now()->subMonths(6))->delete();
         })->daily();
     }
+
 }

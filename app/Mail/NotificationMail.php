@@ -11,7 +11,7 @@ class NotificationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public Notification $notification;
+    public $notification;
 
     /**
      * Create a new message instance.
@@ -28,13 +28,10 @@ class NotificationMail extends Mailable
      *
      * @return $this
      */
-    public function build(): static
+    public function build()
     {
         return $this->subject($this->notification->title)
             ->view('emails.notification')
-            ->with([
-                'title' => $this->notification->title,
-                'message' => $this->notification->message,
-            ]);
+            ->with('notification', $this->notification);
     }
 }

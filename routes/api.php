@@ -237,10 +237,7 @@ Route::middleware(['auth:api', 'check_if_user_is_blocked'])->group(function () {
         Route::post('/notifications', 'store');
         Route::put('/notifications/{id}', 'update');
         Route::delete('/notifications/{id}', 'destroy');
-        Route::post('/notifications/{id}/read', 'markAsRead');
-        Route::post('/notifications/{id}/archive', 'archive');
     });
-
 
 
 
