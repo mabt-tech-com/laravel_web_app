@@ -233,23 +233,12 @@ Route::middleware(['auth:api', 'check_if_user_is_blocked'])->group(function () {
 
     Route::controller(NotificationController::class)->group(function () {
         Route::get('/notifications', 'index');
-        Route::get('/notifications/{id}','show');
+        Route::get('/notifications/{id}', 'show');
         Route::post('/notifications', 'store');
         Route::put('/notifications/{id}', 'update');
         Route::delete('/notifications/{id}', 'destroy');
         Route::post('/notifications/{id}/read', 'markAsRead');
-        Route::post('/notifications/{id}/unread', 'markAsUnread');
         Route::post('/notifications/{id}/archive', 'archive');
-        Route::post('/notifications/{id}/unarchive', 'unarchive');
-
-        Route::get('/test-notifications', function () {
-            Log::info('Memory usage before query: ' . memory_get_usage());
-            $notifications = Notification::limit(10)->get(); // Test with a small subset
-            Log::info('Memory usage after query: ' . memory_get_usage());
-            return response()->json($notifications);
-        });
-
-
     });
 
 

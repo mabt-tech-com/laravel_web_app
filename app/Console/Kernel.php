@@ -24,4 +24,12 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
+
+
+    protected function schedule_notif(Schedule $schedule)
+    {
+        $schedule->call(function () {
+            Notification::where('created_at', '<', now()->subMonths(6))->delete();
+        })->daily();
+    }
 }

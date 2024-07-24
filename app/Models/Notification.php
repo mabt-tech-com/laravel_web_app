@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
@@ -16,10 +17,9 @@ class Notification extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'company_id',
         'title',
         'message',
-        //'user_id',  // null for all users
-        //'role_id', // null for all users
         'scheduled_at', // null for immediate
         'sent_at',
         'status',
@@ -36,15 +36,11 @@ class Notification extends Model
         'deleted_at',
     ];
 
-/*    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }*/
 
-/*    public function role()
+    public function company()
     {
-        return $this->belongsTo(Role::class);
-    }*/
+        return $this->belongsTo(Company::class);
+    }
 
     public function scopePending($query)
     {
@@ -86,7 +82,7 @@ class Notification extends Model
         return $query->where('read', true);
     }
 
-    protected static function boot(): void
+    protected static function boot()
     {
         parent::boot();
 
