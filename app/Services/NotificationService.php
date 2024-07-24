@@ -33,24 +33,56 @@ class NotificationService
         // Send in-app notification
         if ($notification->user_id) {
             // Send notification to specific user
-            $user = User::find($notification->user_id);
-            // Implement the logic to send in-app notification
+            $this->createInAppNotification($notification->user_id, $notification);
         } else if ($notification->role_id) {
             // Send notification to users with specific role
             $users = User::where('role_id', $notification->role_id)->get();
             foreach ($users as $user) {
-                // Implement the logic to send in-app notification
+                $this->createInAppNotification($user->id, $notification);
             }
         } else {
             // Send notification to all users
             $users = User::all();
             foreach ($users as $user) {
-                // Implement the logic to send in-app notification
+                $this->createInAppNotification($user->id, $notification);
             }
         }
 
         // Send SMTP notification if enabled
         if ($notification->send_via_smtp) {
+            $this->sendEmailNotification($notification);
+        }
+    }
+
+    protected function createInAppNotification($userId, $notification)
+    {
+        Notification::create([
+            'company_id' => $notification->company_id,
+            'title' => $notification->title,
+            'message' => $notification->message,
+            'user_id' => $userId,
+            'role_id' => $notification->role_id,
+            'scheduled_at' => $notification->scheduled_at,
+            'sent_at' => $notification->sent_at,
+            'status' => 'sent',
+            'send_via_smtp' => $notification->send_via_smtp,
+            'read' => false,
+            'archived' => false,
+        ]);
+    }
+
+    protected function sendEmailNotification(Notification $notification)
+    {
+        $users = collect();
+        if ($notification->user_id) {
+            $users->push(User::find($notification->user_id));
+        } elseif ($notification->role_id) {
+            $users = User::where('role_id', $notification->role_id)->get();
+        } else {
+            $users = User::all();
+        }
+
+        foreach ($users as $user) {
             Mail::to($user->email)->send(new \App\Mail\NotificationMail($notification));
         }
     }
