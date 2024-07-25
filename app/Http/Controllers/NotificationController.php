@@ -1,103 +1,94 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use App\Models\Notification;
-use App\Services\NotificationService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use App\Mail\NotificationMail;
+use Illuminate\Support\Facades\Mail;
 
-class NotificationController extends Controller
+class NotificationsController extends Controller
 {
-    protected $notificationService;
-
-    public function __construct(NotificationService $notificationService)
-    {
-        $this->notificationService = $notificationService;
-    }
-
+    /**
+     * Display a listing of the notifications.
+     */
     public function index()
     {
-        Log::info('NotificationController@index: Request received');
-
-        try {
-            $notifications = Notification::all();
-            if ($notifications->isEmpty()) {
-                Log::info('NotificationController@index: No notifications found');
-                return response()->json(['message' => 'No notifications found'], 404);
-            }
-            return response()->json($notifications);
-        } catch (\Exception $e) {
-            Log::error('NotificationController@index: Error fetching notifications: ' . $e->getMessage());
-            return response()->json(['message' => 'Error fetching notifications'], 500);
-        }
+        $notifications = Notification::all();
+        return response()->json($notifications);
     }
 
-
-    public function show($id)
-    {
-        try {
-            $notification = Notification::findOrFail($id);
-            return response()->json($notification);
-        } catch (\Exception $e) {
-            Log::error('Notification not found: ' . $e->getMessage());
-            return response()->json(['message' => 'Notification not found'], 404);
-        }
-    }
-
+    /**
+     * Store a newly created notification in storage.
+     */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'company_id' => 'required|integer|exists:companies,id',
+        $request->validate([
             'title' => 'required|string|max:255',
             'message' => 'required|string',
-            'user_id' => 'nullable|integer|exists:users,id',
-            'role_id' => 'nullable|integer|exists:roles,id',
-            'scheduled_at' => 'nullable|date',
-            'send_via_smtp' => 'boolean',
+            'status' => 'required|in:pending,sent,failed,scheduled',
+            'send_via_smtp' => 'sometimes|boolean',
+            'company_id' => 'required|exists:companies,id'
         ]);
 
-        try {
-            $notification = $this->notificationService->sendNotification($data);
-            return response()->json(['message' => 'Notification created successfully.', 'notification' => $notification]);
-        } catch (\Exception $e) {
-            Log::error('Error creating notification: ' . $e->getMessage());
-            return response()->json(['message' => 'Error creating notification'], 500);
+        $notification = new Notification($request->all());
+
+        $notification->save();
+
+        if ($request->send_via_smtp) {
+            $this->sendEmailNotification($notification);
         }
+
+        return response()->json($notification, 201);
     }
 
-    public function update(Request $request, $id)
+    /**
+     * Display the specified notification.
+     */
+    public function show(Notification $notification)
     {
-        try {
-            $notification = Notification::findOrFail($id);
-
-            $data = $request->validate([
-                'title' => 'string|max:255',
-                'message' => 'string',
-                'read' => 'boolean',
-                'archived' => 'boolean',
-            ]);
-
-            $notification->update($data);
-
-            return response()->json(['message' => 'Notification updated successfully.', 'notification' => $notification]);
-        } catch (\Exception $e) {
-            Log::error('Error updating notification: ' . $e->getMessage());
-            return response()->json(['message' => 'Error updating notification'], 500);
-        }
+        return response()->json($notification);
     }
 
-    public function destroy($id)
+    /**
+     * Update the specified notification in storage.
+     */
+    public function update(Request $request, Notification $notification)
     {
-        try {
-            $notification = Notification::findOrFail($id);
-            $notification->delete();
+        $request->validate([
+            'title' => 'sometimes|string|max:255',
+            'message' => 'sometimes|string',
+            'status' => 'sometimes|in:pending,sent,failed,scheduled',
+            'read' => 'sometimes|boolean',
+            'archived' => 'sometimes|boolean',
+            'send_via_smtp' => 'sometimes|boolean'
+        ]);
 
-            return response()->json(['message' => 'Notification deleted successfully.']);
-        } catch (\Exception $e) {
-            Log::error('Error deleting notification: ' . $e->getMessage());
-            return response()->json(['message' => 'Error deleting notification'], 500);
+        $notification->update($request->all());
+
+        if ($request->send_via_smtp && $notification->status === 'pending') {
+            $this->sendEmailNotification($notification);
+            $notification->update(['status' => 'sent']);
         }
+
+        return response()->json($notification);
+    }
+
+    /**
+     * Remove the specified notification from storage.
+     */
+    public function destroy(Notification $notification)
+    {
+        $notification->delete();
+        return response()->json(['message' => 'Notification deleted successfully']);
+    }
+
+    /**
+     * Send an email notification.
+     */
+    protected function sendEmailNotification(Notification $notification)
+    {
+        // Should define more mail sending logic here, exmple:
+        Mail::to('contact@medaminebt.com')->send(new NotificationMail($notification));
     }
 }

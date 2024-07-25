@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -9,15 +10,7 @@ class Notification extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = [
-        'company_id', 'title', 'message', 'user_id', 'role_id',
-        'scheduled_at', 'sent_at', 'status', 'send_via_smtp', 'read', 'archived'
-    ];
-
-    public function company()
-    {
-        return $this->belongsTo(Company::class);
-    }
+    protected $fillable = ['title', 'message', 'user_id', 'role_id', 'status', 'read', 'archived', 'scheduled_at', 'sent_at', 'company_id'];
 
     public function user()
     {

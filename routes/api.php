@@ -231,14 +231,18 @@ Route::middleware(['auth:api', 'check_if_user_is_blocked'])->group(function () {
         Route::delete('/certification/{id}', 'destroy');
     });
 
+    Route::controller(NotificationController::class)->group(function () {
+        Route::get('/notifications', 'index');
+        Route::post('/notifications', 'store');
+        Route::get('/notifications/{id}', 'show');
+        Route::put('/notifications/{id}', 'update');
+        Route::delete('/notifications/{id}', 'destroy');
+    });
+
+
+   // Route::get('/notifications/user/{userId}', [NotificationController::class, 'getByUserId']);
+   // Route::get('/notifications/role/{roleId}', [NotificationController::class, 'getByRoleId']);
+
 
 });
 
-
-Route::controller(NotificationController::class)->group(function () {
-    Route::get('/notifications', 'index');
-    Route::post('/notifications', 'store');
-    Route::get('/notifications/{id}', 'show');
-    Route::put('/notifications/{id}', 'update');
-    Route::delete('/notifications/{id}', 'destroy');
-});

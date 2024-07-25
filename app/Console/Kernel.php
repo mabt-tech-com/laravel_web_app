@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Models\Notification;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -13,6 +14,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->call(function () {
+            Notification::where('created_at', '<', now()->subMonths(6))->delete();
+        })->daily();
     }
 
     /**
@@ -23,14 +27,6 @@ class Kernel extends ConsoleKernel
         $this->load(__DIR__.'/Commands');
 
         require base_path('routes/console.php');
-    }
-
-
-    protected function schedule_notifs(Schedule $schedule)
-    {
-        $schedule->call(function () {
-            Notification::where('created_at', '<', now()->subMonths(6))->delete();
-        })->daily();
     }
 
 }

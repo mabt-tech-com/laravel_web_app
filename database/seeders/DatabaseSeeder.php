@@ -27,6 +27,7 @@ use App\Models\Training;
 use App\Models\User;
 use App\Models\Voucher;
 use Illuminate\Database\Seeder;
+use NotificationSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -142,5 +143,7 @@ class DatabaseSeeder extends Seeder
 
         // notification seeder
         $this->call(NotificationSeeder::class);
+
+
     }
 }
