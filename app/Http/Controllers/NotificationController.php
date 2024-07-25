@@ -1,10 +1,12 @@
 <?php
 
+
 namespace App\Http\Controllers;
 
 use App\Models\Notification;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class NotificationController extends Controller
 {
@@ -17,14 +19,31 @@ class NotificationController extends Controller
 
     public function index()
     {
-        $notifications = Notification::all();
-        return response()->json($notifications);
+        Log::info('NotificationController@index: Request received');
+
+        try {
+            $notifications = Notification::all();
+            if ($notifications->isEmpty()) {
+                Log::info('NotificationController@index: No notifications found');
+                return response()->json(['message' => 'No notifications found'], 404);
+            }
+            return response()->json($notifications);
+        } catch (\Exception $e) {
+            Log::error('NotificationController@index: Error fetching notifications: ' . $e->getMessage());
+            return response()->json(['message' => 'Error fetching notifications'], 500);
+        }
     }
+
 
     public function show($id)
     {
-        $notification = Notification::findOrFail($id);
-        return response()->json($notification);
+        try {
+            $notification = Notification::findOrFail($id);
+            return response()->json($notification);
+        } catch (\Exception $e) {
+            Log::error('Notification not found: ' . $e->getMessage());
+            return response()->json(['message' => 'Notification not found'], 404);
+        }
     }
 
     public function store(Request $request)
@@ -39,32 +58,46 @@ class NotificationController extends Controller
             'send_via_smtp' => 'boolean',
         ]);
 
-        $notification = $this->notificationService->sendNotification($data);
-
-        return response()->json(['message' => 'Notification created successfully.', 'notification' => $notification]);
+        try {
+            $notification = $this->notificationService->sendNotification($data);
+            return response()->json(['message' => 'Notification created successfully.', 'notification' => $notification]);
+        } catch (\Exception $e) {
+            Log::error('Error creating notification: ' . $e->getMessage());
+            return response()->json(['message' => 'Error creating notification'], 500);
+        }
     }
 
     public function update(Request $request, $id)
     {
-        $notification = Notification::findOrFail($id);
+        try {
+            $notification = Notification::findOrFail($id);
 
-        $data = $request->validate([
-            'title' => 'string|max:255',
-            'message' => 'string',
-            'read' => 'boolean',
-            'archived' => 'boolean',
-        ]);
+            $data = $request->validate([
+                'title' => 'string|max:255',
+                'message' => 'string',
+                'read' => 'boolean',
+                'archived' => 'boolean',
+            ]);
 
-        $notification->update($data);
+            $notification->update($data);
 
-        return response()->json(['message' => 'Notification updated successfully.', 'notification' => $notification]);
+            return response()->json(['message' => 'Notification updated successfully.', 'notification' => $notification]);
+        } catch (\Exception $e) {
+            Log::error('Error updating notification: ' . $e->getMessage());
+            return response()->json(['message' => 'Error updating notification'], 500);
+        }
     }
 
     public function destroy($id)
     {
-        $notification = Notification::findOrFail($id);
-        $notification->delete();
+        try {
+            $notification = Notification::findOrFail($id);
+            $notification->delete();
 
-        return response()->json(['message' => 'Notification deleted successfully.']);
+            return response()->json(['message' => 'Notification deleted successfully.']);
+        } catch (\Exception $e) {
+            Log::error('Error deleting notification: ' . $e->getMessage());
+            return response()->json(['message' => 'Error deleting notification'], 500);
+        }
     }
 }

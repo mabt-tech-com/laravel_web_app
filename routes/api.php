@@ -19,7 +19,6 @@ use App\Http\Controllers\TagsController;
 use App\Http\Controllers\TrainingsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\VouchersController;
-use App\Models\Notification;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -69,6 +68,8 @@ Route::prefix('auth')->controller(AuthController::class)->group(function () {
 });
 
 Route::middleware(['auth:api', 'check_if_user_is_blocked'])->group(function () {
+
+
     Route::get('/config', [ConfigController::class, 'index']);
 
     Route::controller(FilesController::class)->group(function () {
@@ -231,14 +232,13 @@ Route::middleware(['auth:api', 'check_if_user_is_blocked'])->group(function () {
     });
 
 
-    Route::controller(NotificationController::class)->group(function () {
-        Route::get('/notifications', 'index');
-        Route::get('/notifications/{id}', 'show');
-        Route::post('/notifications', 'store');
-        Route::put('/notifications/{id}', 'update');
-        Route::delete('/notifications/{id}', 'destroy');
-    });
+});
 
 
-
+Route::controller(NotificationController::class)->group(function () {
+    Route::get('/notifications', 'index');
+    Route::post('/notifications', 'store');
+    Route::get('/notifications/{id}', 'show');
+    Route::put('/notifications/{id}', 'update');
+    Route::delete('/notifications/{id}', 'destroy');
 });

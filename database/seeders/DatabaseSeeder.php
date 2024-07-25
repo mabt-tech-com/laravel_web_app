@@ -138,5 +138,9 @@ class DatabaseSeeder extends Seeder
         Order::factory()->count(300)->create();
 
         Certification::factory()->count(100)->create();
+
+
+        // notification seeder
+        $this->call(NotificationSeeder::class);
     }
 }
